@@ -1,7 +1,9 @@
+import { redis } from "../config/redis.js";
 import User from "../models/user.model.js";
 import { setCookies } from "../utils/cookie.util.js";
 import { generateToken } from "../utils/generateToken.util.js";
 import { storeRefreshToken } from "../utils/redis.util.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   const { email, password, name } = req.body;
@@ -38,7 +40,22 @@ export const login = (req, res) => {
   } catch (error) {}
 };
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
   try {
-  } catch (error) {}
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+      );
+
+      await redis.del(`refresh_token:${decoded.userId}`);
+    }
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.statue(500).json({ message: "Server error", error: error.message });
+  }
 };
