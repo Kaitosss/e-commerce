@@ -1,0 +1,103 @@
+import Order from "../models/order.model.js";
+import Product from "../models/product.model.js";
+import User from "../models/user.model.js";
+
+export const getAnalyticsData = async (req, res) => {
+  try {
+    const analytictsData = await getData();
+
+    const endDate = new Date();
+    const startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const dailySalesData = await getDailySalesData(startDate, endDate);
+
+    res.json({
+      analytictsData,
+      dailySalesData,
+    });
+  } catch (error) {
+    console.log("Error in getAnalyticts controller: ", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+async function getDailySalesData(startDate, endDate) {
+  try {
+    const dailySalseData = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", data: "$createdAt" },
+          },
+          sales: { $sum: 1 },
+          revenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const dataArray = getDatesInRange(startDate, endDate);
+
+    return dataArray.map((date) => {
+      const foundData = dailySalseData.find((item) => item._id === date);
+
+      return {
+        date,
+        salse: foundData?.sales || 0,
+        revenue: foundData?.revenue || 0,
+      };
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+function getDatesInRange(startDate, endDate) {
+  const dates = [];
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    dates.push(currentDate.toISOString().split("T")[0]);
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return dates;
+}
+
+async function getData() {
+  const totalUsers = await User.countDocuments();
+  const totalProducts = await Product.countDocuments();
+
+  const salesData = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalSales: { $sum: 1 },
+        totalRevenue: { $sum: "$totalAmount" },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
+  const { totalSales, totalRevenue } = salesData[0] || {
+    totalSales: 0,
+    totalRevenue: 0,
+  };
+
+  return {
+    users: totalUsers,
+    products: totalProducts,
+    totalSales,
+    totalRevenue,
+  };
+}
