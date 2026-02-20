@@ -2,15 +2,18 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LogIn, Mail, Lock, Loader, UserPlus, ArrowRight } from "lucide-react";
+import { userStore } from "../stores/userStore";
 
 function LoginPage() {
-  const loading = false;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login,loading } = userStore()
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    login(email,password)
   };
 
   return (
