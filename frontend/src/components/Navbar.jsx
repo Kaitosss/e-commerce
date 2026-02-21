@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { userStore } from "../stores/userStore";
 
 function Navbar() {
-  const { user,logout } = userStore();
+  const { user, logout } = userStore();
   const isAdmin = user?.role == "admin";
 
   return (
@@ -54,7 +54,7 @@ function Navbar() {
               <button
                 className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md flex items-center transition duration-300
             ease-in-out cursor-pointer"
-            onClick={logout}
+                onClick={logout}
               >
                 <LogOut size={18} />
                 <span className="hidden sm:inline ml-2">Log Out</span>
