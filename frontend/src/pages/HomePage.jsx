@@ -25,6 +25,7 @@ function Homepage() {
             <CategoryItem category={category} key={category.name} />
           ))}
         </div>
+		
       </div>
     </div>
   );

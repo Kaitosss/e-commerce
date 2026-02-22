@@ -41,7 +41,7 @@ function Navbar() {
             )}
             {isAdmin && (
               <Link
-                to=""
+                to="/dashboard"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-md font-medium transition duration-300 ease-in-out
               flex items-center"
               >
