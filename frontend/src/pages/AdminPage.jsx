@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { BarChart, PlusCircle, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
+import CreateProductForm from "../components/CreateProductForm";
+import ProductList from "../components/ProductList";
+import AnalyticsTab from "../components/AnalyticsTab";
 
 const tabs = [
   { id: "create", label: "Create Product", icon: PlusCircle },
@@ -29,13 +32,17 @@ function AdminPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center px-4 py-2 mx-2 rounded-md transition-colors duration-200 cursor-pointer 
-	      ${activeTab === tab.id ? "bg-emerald-600 text-white" : "bg-gray-600 text-gray-300 hover:bg-gray-700"}`}
+	            ${activeTab === tab.id ? "bg-emerald-600 text-white" : "bg-gray-600 text-gray-300 hover:bg-gray-700"}`}
             >
-              <tab.icon className="m-2 h-5 w-5," />
+              <tab.icon className="m-2 h-5 w-5" />
               {tab.label}
             </button>
           ))}
         </div>
+
+        {activeTab === "create" && <CreateProductForm />}
+        {activeTab === "products" && <ProductList />}
+        {activeTab === "analytics" && <AnalyticsTab />}
       </div>
     </div>
   );
