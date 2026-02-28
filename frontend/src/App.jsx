@@ -10,13 +10,13 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import AdminPage from "./pages/AdminPage";
 
 function App() {
-  const {user,checkAuth,checkingAuth} = userStore()
+  const { user, checkAuth, checkingAuth } = userStore();
 
   useEffect(() => {
-    checkAuth()
-  },[checkAuth])
+    checkAuth();
+  }, [checkAuth]);
 
-  if(checkingAuth) return <LoadingSpinner />
+  if (checkingAuth) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gray-900 relative overflow-hidden text-white">
@@ -30,9 +30,24 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/signup" element={!user ? <SignUpPage /> : <Navigate to={"/"} />} />
-          <Route path="/login" element={!user ? <LoginPage /> : <Navigate to={"/"}/>} />
-	  <Route path="/dashboard" element={user?.role === "admin" ? <AdminPage /> : <Navigate to={"/login"} />} />	
+          <Route
+            path="/signup"
+            element={!user ? <SignUpPage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <LoginPage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/dashboard"
+            element={
+              user?.role === "admin" ? (
+                <AdminPage />
+              ) : (
+                <Navigate to={"/login"} />
+              )
+            }
+          />
         </Routes>
       </div>
 
