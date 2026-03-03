@@ -2,14 +2,32 @@ import { motion } from "framer-motion";
 import { cartStore } from "../stores/cartStore";
 import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
+import axios from "../lib/axios";
 
 function OrderSummary() {
-  const { total, subtotal, coupon, isCouponApplied } = cartStore();
+  const { total, subtotal, coupon, isCouponApplied, cart } = cartStore();
 
   const saving = subtotal - total;
   const formattedSubtotal = subtotal.toFixed(2);
   const formattedTotal = total.toFixed(2);
   const formattedSaving = saving.toFixed(2);
+
+  const handleStripePayment = async () => {
+    try {
+      const { data } = await axios.post("/payments/create-checkout-session", {
+        products: cart,
+        couponCode: coupon?.code || null,
+      });
+
+      if (!data.url) {
+        throw new Error("No checkout URL returned");
+      }
+
+      window.location.assign(data.url);
+    } catch (error) {
+      console.error("Stripe Checkout failed:", error);
+    }
+  };
 
   return (
     <motion.div
@@ -64,6 +82,7 @@ function OrderSummary() {
         font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300 cursor-pointer"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={handleStripePayment}
         >
           Process to Checkout
         </motion.button>

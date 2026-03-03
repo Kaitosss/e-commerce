@@ -48,7 +48,7 @@ export const createCheckoutSession = async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
       discounts: coupon
         ? [
@@ -74,7 +74,7 @@ export const createCheckoutSession = async (req, res) => {
       await createNewCoupon(req.user._id);
     }
 
-    res.status(200).json({ id: session.id, totalAmount: totalAmount / 100 });
+    res.status(200).json({ url: session.url, totalAmount: totalAmount / 100 });
   } catch (error) {
     console.log("Error in createCheckoutSession controller: ", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -84,6 +84,7 @@ export const createCheckoutSession = async (req, res) => {
 export const checkoutSuccess = async (req, res) => {
   try {
     const { sessionId } = req.body;
+    const user = req.user;
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status === "paid") {
@@ -110,7 +111,9 @@ export const checkoutSuccess = async (req, res) => {
         totalAmount: session.amount_total / 100,
         stripeSessionId: sessionId,
       });
+      user.cartItems = [];
 
+      await user.save();
       await newOrder.save();
 
       res.status(200).json({
@@ -122,12 +125,10 @@ export const checkoutSuccess = async (req, res) => {
     }
   } catch (error) {
     console.log("Error processing successful checkout: ", error);
-    res
-      .status(500)
-      .json({
-        message: "Error processing successful checkout",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error processing successful checkout",
+      error: error.message,
+    });
   }
 };
 
