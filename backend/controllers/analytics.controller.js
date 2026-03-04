@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 
 export const getAnalyticsData = async (req, res) => {
   try {
-    const analytictsData = await getData();
+    const analyticsData = await getData();
 
     const endDate = new Date();
     const startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -12,7 +12,7 @@ export const getAnalyticsData = async (req, res) => {
     const dailySalesData = await getDailySalesData(startDate, endDate);
 
     res.json({
-      analytictsData,
+      analyticsData,
       dailySalesData,
     });
   } catch (error) {
@@ -23,7 +23,7 @@ export const getAnalyticsData = async (req, res) => {
 
 async function getDailySalesData(startDate, endDate) {
   try {
-    const dailySalseData = await Order.aggregate([
+    const dailySalesData = await Order.aggregate([
       {
         $match: {
           createdAt: {
@@ -35,7 +35,7 @@ async function getDailySalesData(startDate, endDate) {
       {
         $group: {
           _id: {
-            $dateToString: { format: "%Y-%m-%d", data: "$createdAt" },
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
           },
           sales: { $sum: 1 },
           revenue: { $sum: "$totalAmount" },
@@ -49,11 +49,11 @@ async function getDailySalesData(startDate, endDate) {
     const dataArray = getDatesInRange(startDate, endDate);
 
     return dataArray.map((date) => {
-      const foundData = dailySalseData.find((item) => item._id === date);
+      const foundData = dailySalesData.find((item) => item._id === date);
 
       return {
         date,
-        salse: foundData?.sales || 0,
+        sales: foundData?.sales || 0,
         revenue: foundData?.revenue || 0,
       };
     });
