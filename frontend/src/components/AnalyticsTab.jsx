@@ -41,8 +41,6 @@ function AnalyticsTab() {
     fetchAnalyticsData();
   }, []);
 
-  console.log(dailySalesData);
-
   if (isLoading) return <div>Loading...</div>;
 
   return (

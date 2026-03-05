@@ -82,7 +82,7 @@ function FeaturedProducts({ featuredProducts }) {
           <button
             onClick={prevSlide}
             disabled={isStartDisabled}
-            className={`absolute top-1/2 -left-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 ${
+            className={`absolute top-1/2 -left-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 cursor-pointer ${
               isStartDisabled
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-emerald-600 hover:bg-emerald-500"
@@ -94,7 +94,7 @@ function FeaturedProducts({ featuredProducts }) {
           <button
             onClick={nextSlide}
             disabled={isEndDisabled}
-            className={`absolute top-1/2 -right-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 ${
+            className={`absolute top-1/2 -right-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 cursor-pointer ${
               isEndDisabled
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-emerald-600 hover:bg-emerald-500"
