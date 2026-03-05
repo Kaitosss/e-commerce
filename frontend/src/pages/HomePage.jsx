@@ -3,7 +3,7 @@ import CategoryItem from "../components/CategoryItem";
 import { productStore } from "../stores/productStore";
 import FeaturedProducts from "../components/FeaturedProducts";
 
-function Homepage() {
+function HomePage() {
   const categories = [
     { href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
     { href: "/t-shirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
@@ -43,4 +43,4 @@ function Homepage() {
   );
 }
 
-export default Homepage;
+export default HomePage;
