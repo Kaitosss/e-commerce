@@ -57,13 +57,11 @@ export const userStore = create((set, get) => ({
     }
   },
   refreshToken: async () => {
-    set({ checkingAuth: true });
     try {
       const res = await axios.post("/auth/refresh-token");
-      set({ checkingAuth: false });
       return res.data;
     } catch (error) {
-      set({ user: null, checkingAuth: false });
+      set({ user: null });
       throw error;
     }
   },
@@ -75,7 +73,11 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/auth/refresh-token")
+    ) {
       originalRequest._retry = true;
       try {
         if (refreshPromise) {
