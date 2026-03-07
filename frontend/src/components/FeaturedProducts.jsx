@@ -68,7 +68,7 @@ function FeaturedProducts({ featuredProducts }) {
                       </p>
                       <button
                         onClick={() => addtoCart(product)}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center cursor-pointer"
                       >
                         <ShoppingCart className="w-5 h-5 mr-2" />
                         Add to Cart
